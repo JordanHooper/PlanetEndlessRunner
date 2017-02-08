@@ -3,15 +3,39 @@ using UnityEngine.UI;
 
 public class score : MonoBehaviour
 {
-    public Text myText;
-    float timing = 0f;
-    int modifier = 10;
+    public Text myText, healthText;
+    float speed = 10f, currentScore = 0f;
+    int health, modifier = 10;
+    Rigidbody ship;
+    //AudioSource audio
+
+    void Start()
+    {
+        ship = GetComponent<Rigidbody>();
+        health = 3;
+    }
 
     void Update()
     {
-        currentScore += (Time.deltaTime * modifier);
+        if (health > 0)
+        {
+            speed += 0.1f;
+            currentScore += (Time.deltaTime * modifier);
+            ship.AddForce(transform.forward * speed);
+        }
+        myText.text = "Current score: " + currentScore.ToString("f0");
+        healthText.text = "Health: " + health;
+    }
 
-        myText.text = "Current score: " + timing("f2");
+    void OnColliderEnter(Collider col)
+    {
+        if (col.tag == "obstacle")
+        {
+            health--;
+            Destroy(col);
+            //instantiate an explosion
+            //audio.Play(explsion);
+        }
     }
 
 }
